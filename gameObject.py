@@ -1,5 +1,5 @@
 from pygame.sprite import Sprite, Group
-from pygame.transform import scale
+from pygame.transform import scale, rotate
 from pygame.surface import Surface
 from pygame.color import THECOLORS
 from pygame.mask import from_surface
@@ -79,6 +79,7 @@ class GameObj(Sprite):
             except FileNotFoundError:
                 raise FileNotFoundError(f"{imagePath} not found")
         
+        self.origImage = self.image
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.position.tuple()
         self.mask = from_surface(self.image)
@@ -86,8 +87,20 @@ class GameObj(Sprite):
     def update(self):
         self.position += self.velocity
         self.velocity += self.acceleration
-
         self.rect.x, self.rect.y = self.position.tuple()
+    
+    def rotate(self, angle:float):
+        self.image = rotate(self.origImage, angle)
+        self.rect = self.image.get_rect()
+        self.setPosition()
+        self.mask = from_surface(self.image)
+
+    def setPosition(self, coordinates:Vector2 = None):
+        if coordinates is not None:
+            self.position = coordinates
+        self.rect.x, self.rect.y = self.position.tuple()
+        
+
     
 
 
